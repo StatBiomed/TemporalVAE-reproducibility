@@ -6,6 +6,13 @@
 @Author  ：awa121
 @Date    ：2024/8/19 15:09
 """
+import os
+import sys
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(f"project_root: {project_root}")
+sys.path.append(project_root)
+os.chdir(project_root)
+
 import scanpy as sc
 import pandas as pd
 from collections import Counter
@@ -13,7 +20,7 @@ from collections import Counter
 
 def main():
     select_hvg_bool = False  # 2024-04-03 17:51:44 add here
-    file_path = "../../data/human_embryo_preimplantation/Melania_5datasets/"
+    file_path = "data/human_embryo_preimplantation/Melania_5datasets/"
     adata = sc.read_h5ad(f"{file_path}/adata_human_preimplantation_for_degong.h5")
     non_nan_attr_list = []
     for _f in list(adata.obs.columns):

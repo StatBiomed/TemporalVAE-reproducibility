@@ -8,11 +8,11 @@
 """
 # -*-coding:utf-8 -*-
 import os
-if os.getcwd().split("/")[-1] != "TemporalVAE":
-    os.chdir("../..")
 import sys
-sys.path.append(os.getcwd())
-
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(f"project_root: {project_root}")
+sys.path.append(project_root)
+os.chdir(project_root)
 import anndata as ad
 import pandas as pd
 from TemporalVAE.utils import geneId_geneName_dic, predict_newData_preprocess_df

@@ -2,9 +2,9 @@
 """
 @Project ：TemporalVAE
 @File    ：utils_DandanProject.py
-@IDE     ：PyCharm 
+@IDE     ：PyCharm
 @Author  ：awa121
-@Date    ：2023/6/10 18:49 
+@Date    ：2023/6/10 18:49
 """
 import logging
 
@@ -95,7 +95,7 @@ def predict_on_one_donor(gplvm, cell_time, sc_expression_train, sc_expression_te
                          sample_num=10, args=None):
     # ---------------------------------------------- Freeze gplvm for prediction  --------------------------------------------------
     """
-    After training GPLVM, we get good hyperparameters for the data. 
+    After training GPLVM, we get good hyperparameters for the data.
     Then when new data is provided, we train GPLVM again with these fixed hyperparameters to learn X.
     """
     import pyro
@@ -561,7 +561,7 @@ def predict_on_one_donor(gplvm, cell_time, sc_expression_train, sc_expression_te
                          sample_num=10, args=None):
     # ---------------------------------------------- Freeze gplvm for prediction  --------------------------------------------------
     """
-    After training GPLVM, we get good hyperparameters for the data. 
+    After training GPLVM, we get good hyperparameters for the data.
     Then when new data is provided, we train GPLVM again with these fixed hyperparameters to learn X.
     """
     import pyro
@@ -1168,14 +1168,14 @@ def identify_timeCorGene(sc_expression_df, cell_info, y_time_nor_tensor, donor_i
     :param sc_expression_df:
     :param y_time_nor_tensor:
     :param donor_index_tensor:
-    :param runner: 
-    :param experiment: 
+    :param runner:
+    :param experiment:
     :param trained_clf_ndarray:
-    :param golbal_path: 
-    :param file_path: 
-    :param latent_dim: 
-    :param special_path_str: 
-    :param config: 
+    :param golbal_path:
+    :param file_path:
+    :param latent_dim:
+    :param special_path_str:
+    :param config:
     :return:
     """
     save_file_path = f"{_logger.root.handlers[0].baseFilename.replace('.log', '')}{special_path_str}/"
@@ -1375,16 +1375,16 @@ def test_on_newDataset(sc_expression_train, data_golbal_path, result_save_path, 
     """
     2023-07-13 14:39:38 dandan share a new dataset (download from public database, with epi and fibro, different platfrom: ct and 10X)
     use all dandan data as train data to train a model and test on the new dataset.
-    :param sc_expression_train: 
+    :param sc_expression_train:
     :param data_golbal_path:
-    :param KNN_smooth_type: 
-    :param runner: 
-    :param experiment: 
-    :param config: 
-    :param latent_dim: 
-    :param special_path_str: 
-    :param time_standard_type: 
-    :return: 
+    :param KNN_smooth_type:
+    :param runner:
+    :param experiment:
+    :param config:
+    :param latent_dim:
+    :param special_path_str:
+    :param time_standard_type:
+    :return:
     """
     from TemporalVAE.model_master.dataset import SupervisedVAEDataset_onlyPredict
     _logger.info("Test on new dataset.")
@@ -2028,7 +2028,7 @@ def one_fold_test_adversarialTrain(fold, donor_list, sc_expression_df, donor_dic
 def onlyTrain_model(sc_expression_df, donor_dic,
                     special_path_str,
                     cell_time,
-                    time_standard_type, config, args, device=None, batch_dim=0, plot_latentSpaceUmap=True,
+                    time_standard_type, config, train_epoch_num, device=None, batch_dim=0, plot_latentSpaceUmap=True,
                     time_saved_asFloat=False,
                     batch_size=None, max_attempts=10000000, adversarial_bool=False, batch_dic=None,
                     donor_str="donor", time_str="time", checkpoint_file=None, min_max_val=None,
@@ -2045,7 +2045,7 @@ def onlyTrain_model(sc_expression_df, donor_dic,
     :param cell_time:
     :param time_standard_type:
     :param config:
-    :param args:
+    :param train_epoch_num:
     :param device:
     :param batch_dim:
     :param plot_latentSpaceUmap:
@@ -2107,7 +2107,7 @@ def onlyTrain_model(sc_expression_df, donor_dic,
                  f"\nAfter trans y_time_nor_train detail: {np.unique(y_time_nor_train)}")
 
     # ------------------------------------------- Set up VAE model and Start train process -------------------------------------------------
-    _logger.info("Start training with epoch: {}. ".format(args.train_epoch_num))
+    _logger.info("Start training with epoch: {}. ".format(train_epoch_num))
 
     # if (int(config['model_params']['in_channels']) == 0) :
     config['model_params']['in_channels'] = x_sc_train.shape[0]
@@ -2163,7 +2163,7 @@ def onlyTrain_model(sc_expression_df, donor_dic,
                      ],
                      # check_val_every_n_epoch=1, val_check_interval=1,
                      devices=[int(device.split(":")[-1])],
-                     accelerator="gpu", max_epochs=args.train_epoch_num
+                     accelerator="gpu", max_epochs=train_epoch_num
                      )
 
     Path(f"{tb_logger.log_dir}/Samples").mkdir(exist_ok=True, parents=True)
@@ -2200,13 +2200,13 @@ def onlyTrain_model(sc_expression_df, donor_dic,
     else:
         _logger.info("Don't plot training loss line for check.")
 
-    """when we want to get an embedding for specific inputs: 
+    """when we want to get an embedding for specific inputs:
     We either
-    1 Feed a hand-written character "9" to VAE, receive a 20 dimensional "mean" vector, then embed it into 2D dimension using t-SNE, 
+    1 Feed a hand-written character "9" to VAE, receive a 20 dimensional "mean" vector, then embed it into 2D dimension using t-SNE,
     and finally plot it with label "9" or the actual image next to the point, or
     2 We use 2D mean vectors and plot directly without using t-SNE.
-    Note that 'variance' vector is not used for embedding. 
-    However, its size can be used to show the degree of uncertainty. 
+    Note that 'variance' vector is not used for embedding.
+    However, its size can be used to show the degree of uncertainty.
     For example a clear '9' would have less variance than a hastily written '9' which is close to '0'."""
     if plot_latentSpaceUmap:
         if time_standard_type == "organdic":  # 2023-11-07 17:10:53 add for Joy project

@@ -10,10 +10,10 @@ Description:
 
 import os
 import sys
-
-if os.getcwd().split("/")[-1] != "TemporalVAE":
-    os.chdir("../..")
-sys.path.append(os.getcwd())
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(f"project_root: {project_root}")
+sys.path.append(project_root)
+os.chdir(project_root)
 
 import torch
 

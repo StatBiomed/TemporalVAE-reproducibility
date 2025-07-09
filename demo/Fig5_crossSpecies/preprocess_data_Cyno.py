@@ -33,11 +33,12 @@ write.table(
   sep = "\t"
 )
 """
-import os, sys
-
-if os.getcwd().split("/")[-1] != "TemporalVAE":
-    os.chdir("../..")
-sys.path.append(os.getcwd())
+import os
+import sys
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(f"project_root: {project_root}")
+sys.path.append(project_root)
+os.chdir(project_root)
 import pandas as pd
 import gc
 from collections import Counter

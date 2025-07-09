@@ -13,7 +13,7 @@ import sys
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 print(f"project_root: {project_root}")
 sys.path.append(project_root)
-
+os.chdir(project_root)
 import matplotlib.pyplot as plt
 from scipy.stats import spearmanr, kendalltau
 import numpy as np

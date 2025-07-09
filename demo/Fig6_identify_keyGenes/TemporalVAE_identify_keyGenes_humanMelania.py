@@ -13,13 +13,12 @@ cd /mnt/yijun/nfs_share/awa_project/awa_github/TemporalVAE/
 source ~/.bashrc
 nohup python -u Fig3_mouse_data/TemporalVAE_kFoldOn_mouseAtlas.py --result_save_path 240611_mouseAtlas_test --kfold_test --train_whole_model >> logs/VAE_mouse_kFoldOn_mouseAtlas.log 2>&1 &
 """
-import gc
 import os
 import sys
-
-if os.getcwd().split("/")[-1] != "TemporalVAE":
-    os.chdir("../..")
-sys.path.append(os.getcwd())
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(f"project_root: {project_root}")
+sys.path.append(project_root)
+os.chdir(project_root)
 
 import torch
 

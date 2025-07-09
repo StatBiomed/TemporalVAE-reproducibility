@@ -6,14 +6,13 @@
 @Author  ：awa121
 @Date    ：2024/10/1 20:30
 """
-import gc
 import os
 import sys
-import gseapy
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(f"project_root: {project_root}")
+sys.path.append(project_root)
+os.chdir(project_root)
 
-if os.getcwd().split("/")[-1] != "TemporalVAE":
-    os.chdir("../..")
-sys.path.append(os.getcwd())
 import pandas as pd
 from TemporalVAE.utils import denormalize, get_top_gene_perturb_data,preprocessData_and_dropout_some_donor_or_gene
 from TemporalVAE.utils import plt_enrichmentResult

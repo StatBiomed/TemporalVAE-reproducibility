@@ -1,8 +1,8 @@
 # -*-coding:utf-8 -*-
 """
-@Project ：TemporalVAE 
+@Project ：TemporalVAE
 @File    ：preprocess_data_mouse_embryo_stereo.py
-@IDE     ：PyCharm 
+@IDE     ：PyCharm
 @Author  ：awa121
 @Date    ：2023/8/24 13:07
 
@@ -16,7 +16,7 @@
 import scanpy as sc
 import numpy as np
 import pandas as pd
-import pyreadr
+# import pyreadr
 import os
 import anndata
 

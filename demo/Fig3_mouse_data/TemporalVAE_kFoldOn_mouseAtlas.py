@@ -16,21 +16,20 @@ nohup python -u Fig3_mouse_data/TemporalVAE_kFoldOn_mouseAtlas.py --result_save_
 
 import os
 import sys
-
-if os.getcwd().split("/")[-1] != "TemporalVAE":
-    os.chdir("../..")
-sys.path.append(os.getcwd())
-
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(f"project_root: {project_root}")
+sys.path.append(project_root)
+os.chdir(project_root)
 import torch
 
 torch.set_float32_matmul_precision('high')
-import pyro
+# import pyro
 import logging
 from TemporalVAE.utils import LogHelper
 
-smoke_test = ('CI' in os.environ)  # ignore; used to check code integrity in the Pyro repo
-assert pyro.__version__.startswith('1.8.5')
-pyro.set_rng_seed(1)
+# smoke_test = ('CI' in os.environ)  # ignore; used to check code integrity in the Pyro repo
+# assert pyro.__version__.startswith('1.8.5')
+# pyro.set_rng_seed(1)
 from TemporalVAE.utils import str2bool, auto_select_gpu_and_cpu, preprocessData_and_dropout_some_donor_or_gene
 from TemporalVAE.utils import task_kFoldTest, onlyTrain_model, identify_timeCorGene
 from collections import Counter

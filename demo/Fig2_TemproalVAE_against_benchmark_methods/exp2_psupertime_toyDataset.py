@@ -14,6 +14,7 @@ import sys
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 print(f"project_root: {project_root}")
 sys.path.append(project_root)
+os.chdir(project_root)
 from TemporalVAE.utils.utils_plot import plot_psupertime_density
 from pypsupertime import Psupertime
 import anndata
