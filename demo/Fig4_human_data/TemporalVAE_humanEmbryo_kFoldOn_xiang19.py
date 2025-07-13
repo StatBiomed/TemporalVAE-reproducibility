@@ -19,13 +19,13 @@ os.chdir(project_root)
 import torch
 
 torch.set_float32_matmul_precision('high')
-import pyro
+# import pyro
 import logging
 from TemporalVAE.utils import LogHelper
 
 smoke_test = ('CI' in os.environ)  # ignore; used to check code integrity in the Pyro repo
-assert pyro.__version__.startswith('1.8.5')
-pyro.set_rng_seed(1)
+# assert pyro.__version__.startswith('1.8.5')
+# pyro.set_rng_seed(1)
 from TemporalVAE.utils import auto_select_gpu_and_cpu, preprocessData_and_dropout_some_donor_or_gene, Embryodonor_resort_key, onlyTrain_model
 from TemporalVAE.utils import denormalize, task_kFoldTest
 from TemporalVAE.utils import plt_umap_byScanpy
@@ -116,8 +116,7 @@ def main():
     _logger = logging.getLogger(__name__)
     _logger.info("Finished setting up the logger at: {}.".format(logger_file))
     _logger.info("Train on dataset: {}.".format(data_golbal_path + data_path))
-    device = auto_select_gpu_and_cpu()
-    _logger.info("Auto select run on {}".format(device))
+
     _logger.info("load vae model parameters from file: {}".format(yaml_path + args.vae_param_file + ".yaml"))
     # ------------ Preprocess data, with hvg gene from preprocess_data_mouse_embryonic_development.py------------------------
     sc_expression_df, cell_time = preprocessData_and_dropout_some_donor_or_gene(data_golbal_path,
@@ -151,8 +150,8 @@ def main():
             sc_expression_df_filter, donor_dic,
             special_path_str,
             cell_time_filter,
-            time_standard_type, config, args,
-            device=device, plot_latentSpaceUmap=False, plot_trainingLossLine=True, time_saved_asFloat=True, batch_dic=batch_dic, donor_str="day",
+            time_standard_type, config, args.train_epoch_num,
+             plot_latentSpaceUmap=False, plot_trainingLossLine=True, time_saved_asFloat=True, batch_dic=batch_dic, donor_str="day",
             batch_size=int(args.batch_size))  # 2023-10-24 17:44:31 batch as 10,000 due to overfit, batch size as 100,000 may be have different result
         predict_donors_df = pd.DataFrame(train_clf_result, columns=["pseudotime"], index=cell_time_filter.index)
         predict_donors_df['predicted_time'] = predict_donors_df['pseudotime'].apply(denormalize, args=(min(label_dic.keys()) / 100, max(label_dic.keys()) / 100,

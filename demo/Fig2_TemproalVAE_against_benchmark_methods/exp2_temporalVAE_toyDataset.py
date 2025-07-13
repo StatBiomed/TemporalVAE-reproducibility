@@ -39,7 +39,8 @@ from plotFig2_check_corr import preprocess_parameters, corr
 
 
 def main():
-    dataset_list = ["embryoBeta","humanGermline", "acinarHVG",  ]
+    # dataset_list = ["embryoBeta","humanGermline", "acinarHVG",  ]
+    dataset_list = ["embryoBeta"  ]
     for dataset in dataset_list:
         method_calculate(dataset)
 
@@ -212,9 +213,11 @@ def process_fold_toyDataset(fold, donor_list, adata, time_standard_type, config,
     else:
         print("The Array does not contain NaN values")
     print("predicted time of test donor is continuous.")
-
-    _result_df = pd.DataFrame({'time': donor_list[fold],  # First column with a constant value of 1
+    try:
+        _result_df = pd.DataFrame({'time': donor_list[fold],  # First column with a constant value of 1
                                'pseudotime': np.squeeze(test_clf_result, axis=1)})
+    except:
+        print("Error")
     # _result_df['pseudotime'] = _result_df['pseudotime_normalized'].apply(denormalize, args=(min(label_dic.keys()), max(label_dic.keys()), min(label_dic.values()), max(label_dic.values())))
     _result_df["trans_label"] = _result_df["time"].map(label_dic)
     print("Plot training loss line for check.")

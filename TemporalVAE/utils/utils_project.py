@@ -1119,15 +1119,15 @@ def trans_time(capture_time, time_standard_type, capture_time_other=None, label_
         else:
             min_val = np.min(unique_time)
             max_val = np.max(unique_time)
-        full_range = np.arange(min_val, max_val + 50, 50)  # +50 确保包含1850
+        # full_range = np.arange(min_val, max_val + 50, 50)
 
-        # 合并原列表和完整序列，去重并排序
-        unique_time = sorted(list(set(unique_time.tolist() + full_range.tolist())))
+
+        # unique_time = sorted(list(set(unique_time.tolist() + full_range.tolist())))
         # 最小-最大归一化
         normalized_data = (unique_time - min_val) * (new_max - new_min) / (max_val - min_val) + new_min
         # normalized_data = (unique_time - min_val) / (max_val - min_val) * 2 - 1
 
-        # 构建字典，保留小数点后三位
+
         label_dic = {int(key): round(value, 3) for key, value in zip(unique_time, normalized_data)}
     elif time_standard_type == "organdic":  # 2023-11-02 10:50:09 add for Joy organ project
         # label_dic = {100: 1, 0: 0} # 2023-11-07 12:18:52 for "mesen" attr, don't use.

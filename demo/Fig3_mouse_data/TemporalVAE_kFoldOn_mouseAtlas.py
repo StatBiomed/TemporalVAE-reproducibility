@@ -143,7 +143,7 @@ def main():
             sc_expression_df, donor_dic,
             special_path_str,
             cell_time,
-            time_standard_type, config, args,
+            time_standard_type, config, args.train_epoch_num,
             device=device, plot_latentSpaceUmap=False, time_saved_asFloat=True,
             batch_size=int(args.batch_size),
             checkpoint_file=checkpoint_file)  # 2023-10-24 17:44:31 batch as 10,000 due to overfit, batch size as 100,000 may be have different result
