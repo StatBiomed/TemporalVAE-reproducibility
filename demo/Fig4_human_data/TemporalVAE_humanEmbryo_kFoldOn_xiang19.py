@@ -19,13 +19,13 @@ os.chdir(project_root)
 import torch
 
 torch.set_float32_matmul_precision('high')
-# import pyro
+import pyro
 import logging
 from TemporalVAE.utils import LogHelper
 
-smoke_test = ('CI' in os.environ)  # ignore; used to check code integrity in the Pyro repo
+# smoke_test = ('CI' in os.environ)  # ignore; used to check code integrity in the Pyro repo
 # assert pyro.__version__.startswith('1.8.5')
-# pyro.set_rng_seed(1)
+pyro.set_rng_seed(1)
 from TemporalVAE.utils import auto_select_gpu_and_cpu, preprocessData_and_dropout_some_donor_or_gene, Embryodonor_resort_key, onlyTrain_model
 from TemporalVAE.utils import denormalize, task_kFoldTest
 from TemporalVAE.utils import plt_umap_byScanpy

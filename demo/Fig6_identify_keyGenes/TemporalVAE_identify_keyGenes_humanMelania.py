@@ -27,8 +27,8 @@ import pyro
 import logging
 from TemporalVAE.utils import LogHelper
 
-smoke_test = ('CI' in os.environ)  # ignore; used to check code integrity in the Pyro repo
-assert pyro.__version__.startswith('1.8.5')
+# smoke_test = ('CI' in os.environ)  # ignore; used to check code integrity in the Pyro repo
+# assert pyro.__version__.startswith('1.8.5')
 pyro.set_rng_seed(1)
 from TemporalVAE.utils import str2bool, preprocessData_and_dropout_some_donor_or_gene
 from TemporalVAE.utils import onlyTrain_model, identify_timeCorGene

@@ -71,11 +71,13 @@ def calculate(species,
     cell_obs_time_max=cell_info['time'].max()
 
     cell_info['predicted_time_denor'] = cell_info['predicted_time'].apply(denormalize, args=(cell_obs_time_min, cell_obs_time_max, -5, 5))
-    perturb_data_denor = perturb_data.apply(lambda col: col.apply(denormalize, args=(cell_obs_time_min, cell_obs_time_max, -5, 5)))
+    # perturb_data_denor = perturb_data.apply(lambda col: col.apply(denormalize, args=(cell_obs_time_min, cell_obs_time_max, -5, 5)))
+    perturb_data_denor = (perturb_data - (-5)) * (cell_obs_time_max - cell_obs_time_min) / (5 - (-5)) + cell_obs_time_min
     # print(f"if index equal: {cell_info.index.equals(perturb_data_denor.index)}")
     # ---
-    plt_allGene_dot_voteNum_meanDetT_Exp(cell_info.copy(), perturb_data_denor.copy(), perturb_gene_cor_data.copy(), file_path,
-                                         top_gene_num=enr_gene_num, x_str="mean", stage_str="allStage", species=species)
+    print(f"Scatter.")
+    # plt_allGene_dot_voteNum_meanDetT_Exp(cell_info.copy(), perturb_data_denor.copy(), perturb_gene_cor_data.copy(), file_path,
+    #                                      top_gene_num=enr_gene_num, x_str="mean", stage_str="allStage", species=species)
     # ---
     bins = bin_dic[species]
     stage_list = ['early', 'middle', 'late']
@@ -91,43 +93,6 @@ def calculate(species,
     perturb_top_gene_dic = {}
     enr_top_gene_dic = {}
     used_genes = set()
-    # ---- 2024-11-05 18:37:40 plot in manuscript Fig6A
-    # --- 2024-11-05 19:44:09 plot Venn of enr_top_gene_dic
-    intersection = plt_venn_fromDict(enr_top_gene_dic, file_path, perturb_show_gene_num, species)
-    special_gene_for_mouse_dic = {'early': ['Bmp5', 'Bmp4', 'Hapln1', 'Hba-x'],
-                                  'middle': ['Hecw1', 'Onecut2', 'Csmd1', 'Lingo2'],
-                                  'late': ['Snhg11', 'Chl1', 'Slc4a1', 'Syt4']}
-    # plt expression of genes
-    if species == "mouse":
-        sc_expression_df, cell_time = preprocessData_and_dropout_some_donor_or_gene('data/',
-                                                                                    '/mouse_embryonic_development/preprocess_adata_JAX_dataset_combine_minGene100_minCell50_hvg1000///data_count_hvg.csv',
-                                                                                    '/mouse_embryonic_development/preprocess_adata_JAX_dataset_combine_minGene100_minCell50_hvg1000///cell_with_time.csv',
-                                                                                    min_cell_num=50,
-                                                                                    min_gene_num=100)
-        sc_expression_df = sc_expression_df.rename(columns=gene_mapping)
-        plt_muiltViolin_forGenes_xRawCount(sc_expression_df, intersection, cell_time, file_path,
-                                           perturb_show_gene_num, species, special_filename_str="_intersection")
-
-        combined_list = [item for sublist in special_gene_for_mouse_dic.values() for item in sublist]
-        print(combined_list)
-        plt_muiltViolin_forGenes_xRawCount(sc_expression_df, combined_list, cell_time, file_path,
-                                           perturb_show_gene_num, species, special_filename_str="_perturbTopGenes")
-    elif species == "human":
-        sc_expression_df, cell_time = preprocessData_and_dropout_some_donor_or_gene('data/',
-                                                                                    '/human_embryo_preimplantation/Melania_5datasets//data_count_hvg.csv',
-                                                                                    '/human_embryo_preimplantation/Melania_5datasets//cell_with_time.csv',
-                                                                                    min_cell_num=50,
-                                                                                    min_gene_num=50,
-                                                                                    data_raw_count_bool=False)
-        sc_expression_df = sc_expression_df.rename(columns=gene_mapping)
-        plt_muiltViolin_forGenes_xRawCount(sc_expression_df, intersection, cell_time, file_path,
-                                           perturb_show_gene_num, species, special_filename_str="_intersection")
-
-        combined_list = [item for sublist in perturb_top_gene_dic.values() for item in sublist]
-        print(combined_list)
-        plt_muiltViolin_forGenes_xRawCount(sc_expression_df, combined_list, cell_time, file_path,
-                                           perturb_show_gene_num, species, special_filename_str="_perturbTopGenes")
-
     for _s in stage_list:
         _plot_pd, _top_gene_list, _stage_pert_data = get_top_gene_perturb_data(cell_info.copy(),
                                                                             _s,
@@ -155,7 +120,7 @@ def calculate(species,
             _g = _all[i]
             if _g not in used_genes:
                 _genes.append(_g)
-                used_genes.add(_g)  #
+                used_genes.add(_g)  # 添加到已使用集合中
             i = i + 1
 
         perturb_top_gene_dic[_s] = _genes
@@ -164,10 +129,14 @@ def calculate(species,
     print(f"In each stage, with {top_metric}, top {perturb_show_gene_num}: {perturb_top_gene_dic}")
     print(f"In each stage, with {top_metric}, top {enr_gene_num}: {enr_top_gene_dic}")
 
-
+    # ---- 2024-11-05 18:37:40 plot in manuscript Fig6A
+    # --- 2024-11-05 19:44:09 plot Venn of enr_top_gene_dic
+    intersection = plt_venn_fromDict(enr_top_gene_dic, file_path, perturb_show_gene_num, species)
     # --- 2024-11-05 23:23:42 plot some special gene of mouse
     if species=="mouse":
-
+        special_gene_for_mouse_dic = {'early': ['Bmp5', 'Bmp4', 'Hapln1', 'Hba-x'],
+                                  'middle': ['Hecw1', 'Onecut2', 'Csmd1', 'Lingo2'],
+                                  'late': ['Snhg11', 'Chl1', 'Slc4a1', 'Syt4']}
         plt_lineChart_stageGeneDic_inStages(special_gene_for_mouse_dic.copy(), perturb_data_denor.copy(),
                                             cell_info.copy(), perturb_show_gene_num,
                                             species, stage_timePoint_dic,
@@ -197,6 +166,36 @@ def calculate(species,
                                         species, stage_timePoint_dic,
                                         file_path, cal_detT_str="mean", plt_stage="intersection", plt_timePoint="whole",
                                         figsize_hight_weight=len(intersection)/2+4)
+    # plt expression of genes
+    if species=="mouse":
+        sc_expression_df, cell_time = preprocessData_and_dropout_some_donor_or_gene('data/',
+                                                                                    '/mouse_embryonic_development/preprocess_adata_JAX_dataset_combine_minGene100_minCell50_hvg1000///data_count_hvg.csv',
+                                                                                    '/mouse_embryonic_development/preprocess_adata_JAX_dataset_combine_minGene100_minCell50_hvg1000///cell_with_time.csv',
+                                                                                    min_cell_num=50,
+                                                                                    min_gene_num=100)
+        sc_expression_df = sc_expression_df.rename(columns=gene_mapping)
+        plt_muiltViolin_forGenes_xRawCount(sc_expression_df, intersection, cell_time, file_path,
+                                           perturb_show_gene_num, species, special_filename_str="_intersection")
+
+        combined_list = [item for sublist in special_gene_for_mouse_dic.values() for item in sublist]
+        print(combined_list)
+        plt_muiltViolin_forGenes_xRawCount(sc_expression_df, combined_list, cell_time, file_path,
+                                           perturb_show_gene_num, species, special_filename_str="_perturbTopGenes")
+    elif species=="human":
+        sc_expression_df, cell_time = preprocessData_and_dropout_some_donor_or_gene('data/',
+                                                                                    '/human_embryo_preimplantation/Melania_5datasets//data_count_hvg.csv',
+                                                                                    '/human_embryo_preimplantation/Melania_5datasets//cell_with_time.csv',
+                                                                                    min_cell_num=50,
+                                                                                    min_gene_num=50,
+                                                                                    data_raw_count_bool=False)
+        sc_expression_df = sc_expression_df.rename(columns=gene_mapping)
+        plt_muiltViolin_forGenes_xRawCount(sc_expression_df, intersection, cell_time, file_path,
+                                           perturb_show_gene_num, species,special_filename_str="_intersection")
+
+        combined_list = [item for sublist in perturb_top_gene_dic.values() for item in sublist]
+        print(combined_list)
+        plt_muiltViolin_forGenes_xRawCount(sc_expression_df, combined_list, cell_time, file_path,
+                                           perturb_show_gene_num, species,special_filename_str="_perturbTopGenes")
 
 
     # ------- more gene for supplementary

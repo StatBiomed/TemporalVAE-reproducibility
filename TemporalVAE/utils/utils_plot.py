@@ -1,10 +1,10 @@
 # -*-coding:utf-8 -*-
 """
-@Project ：TemporalVAE 
+@Project ：TemporalVAE
 @File    ：utils_plot.py
-@IDE     ：PyCharm 
+@IDE     ：PyCharm
 @Author  ：awa121
-@Date    ：2023/7/27 16:37 
+@Date    ：2023/7/27 16:37
 """
 
 import logging
@@ -1735,7 +1735,7 @@ def plot_tyser_mapping_to_datasets_attrTimeGT(adata_all, save_path, plot_attr,
     color_dic = {str(time): color for time, color in zip(unique_times, colors)}
     if mask_dataset_label in ["t", "T"]:
         color_dic[query_timePoint] = (0.9, 0.9, 0.9, mask_color_alpha)
-    elif mask_dataset_label in ["l & m & p & z & xiao", "L & M & P & Z & X & C","L & M & P & Z & Xiao & C"]:
+    elif mask_dataset_label in ["l & m & p & z & xiao", "L & M & P & Z & X & C", "L & M & P & Z & Xiao & C"]:
         for _t in color_dic.keys():
             if _t != query_timePoint:
                 color_dic[_t] = (0.9, 0.9, 0.9, mask_color_alpha)
@@ -1759,6 +1759,8 @@ def plot_tyser_mapping_to_datasets_attrTimeGT(adata_all, save_path, plot_attr,
     plt.show()
     plt.close()
     print(f"figure save at {save_file_name}")
+
+
 #
 # def plot_query_mapping_to_referenceUmapSpace_attrTimeGT(adata_all, save_path, plot_attr,
 #                                               query_timePoint='16.5',
@@ -1967,6 +1969,8 @@ def plot_query_mapping_to_referenceUmapSpace_attrTimeGT(adata_all, save_path, pl
     plt.show()
     plt.close()
     print(f"figure save at {save_file_name}")
+
+
 def plot_tyser_mapping_to_4dataset_predictedTime(adata_all, save_path, label_dic,
                                                  mask_dataset_label="t",
                                                  plot_attr='predicted_time',
@@ -2108,7 +2112,7 @@ def plot_tyser_mapping_to_datasets_attrCellType_maskTyser(adata_all, save_path, 
                    loc='center left', bbox_to_anchor=(1, 0.5), ncol=2)
     else:
         plt.legend(handles=handles, title=legend_title, fontsize=13, title_fontsize=14,
-               loc='center left', bbox_to_anchor=(1, 0.5))
+                   loc='center left', bbox_to_anchor=(1, 0.5))
     # plt.legend(title=legend_title, fontsize=13, title_fontsize=13,loc='center left', bbox_to_anchor=(1, 0.5))
     plt.gca().set_position([0, 0, 1, 1])
 
@@ -2447,9 +2451,9 @@ def plt_allGene_dot_voteNum_meanDetT_Exp(cell_info, perturb_data_denor, pertrub_
 def plt_muiltViolin_forGenes_xRawCount(adata_df, intersection, cell_info,
                                        save_path, perturb_show_gene_num,
                                        species, special_filename_str=""):
-    # 从 anndata 中提取基因表达数据
+    #
     expr_matrix = adata_df[list(intersection)]
-    # 确保 cell_anno 的索引与 expr_matrix 对应
+    #
     expr_matrix['cell_id'] = expr_matrix.index
     cell_info["cell_id"] = cell_info.index
     cell_info2 = cell_info[cell_info['cell_id'].isin(expr_matrix['cell_id'])]
@@ -2462,30 +2466,34 @@ def plt_muiltViolin_forGenes_xRawCount(adata_df, intersection, cell_info,
 
     # 绘制 violin plot
     unique_time_points = full_data['time'].nunique()
-    fig, axes = plt.subplots(nrows=len(intersection), figsize=(unique_time_points / 2, len(intersection) / 1.5),
-                             # constrained_layout=True
-                             )
+    fig, axes = plt.subplots(nrows=len(intersection), figsize=(unique_time_points / 1.4, len(intersection) / 1.2), )  # constrained_layout=True
+    # fig, axes = plt.subplots(nrows=len(intersection), figsize=(unique_time_points / 2, len(intersection) / 1.5),)# constrained_layout=True
     print(unique_time_points / 2, len(intersection) / 1.5)
     for i, gene in enumerate(intersection):
         vplot = sns.violinplot(x='time', y=gene, data=full_data, palette=palette, inner=None, ax=axes[i])
-        axes[i].set_ylabel(gene, rotation=0, horizontalalignment='right', labelpad=2)
+        axes[i].set_ylabel(gene, rotation=0,
+                           horizontalalignment='right', verticalalignment='center',
+                           labelpad=2, fontsize=20)
         # axes[i].set_xlabel('Time')
         axes[i].spines['top'].set_visible(False)
         axes[i].spines['right'].set_visible(False)
         if i < len(intersection) - 1:
-            axes[i].tick_params(labelbottom=False)  # 隐藏非最后一个图的 x 轴标签
+            axes[i].tick_params(labelbottom=False, axis='y', labelsize=10)  # 隐藏非最后一个图的 x 轴标签
+            axes[i].set_xticks([])
             axes[i].set_xlabel('')
         else:
 
-            axes[i].tick_params(labelbottom=True)
-            axes[i].set_xlabel('Biogical time')
-            axes[i].set_xticklabels(vplot.get_xticklabels(), rotation=45)
+            axes[i].tick_params(labelbottom=True, axis='y', labelsize=10)  # ,labelsize=20
+            axes[i].set_xlabel('Biogical time', fontsize=22)
+            axes[i].set_xticklabels(vplot.get_xticklabels(), rotation=45, fontsize=20)
     plt.tight_layout()
     save_file_name = f"{save_path}/geneExpression_top{perturb_show_gene_num}Gene_{species}_violin{special_filename_str}.png"
     plt.savefig(save_file_name, dpi=200)
     print(f"figure save as {save_file_name}")
     plt.show()
     plt.close()
+
+
 def plot_to_identify_cluster_of_Tyser(adata):
     import matplotlib.pyplot as plt
     # 1. plot location (x,y) of cells in umap to identify cell clusters.
