@@ -21,7 +21,7 @@ import gc
 def plot_data_quality(adata):
     import scanpy as sc
     print("Original data quality check by plot images.")
-    sc.settings.set_figure_params(dpi=200, facecolor="white")
+    sc.settings.set_figure_params(dpi=450, facecolor="white")
     sc.pl.highest_expr_genes(adata, n_top=20)
     try:
         sc.pp.calculate_qc_metrics(adata, qc_vars=["mt", "ribo", "hb"], inplace=True, log1p=True)
@@ -279,7 +279,8 @@ def plot_on_each_test_donor_violin_fromDF(cell_time_df, save_path, y_attr, x_att
 
     plt.xticks()
 
-    plt.savefig(f"{save_path}/{special_file_name_str}violine.png", dpi=200)
+    plt.savefig(f"{save_path}/{special_file_name_str}violine.png", dpi=450)
+    plt.savefig(f"{save_path}/{special_file_name_str}violine.pdf", dpi=450)
 
     plt.show()
     plt.close()
@@ -1385,8 +1386,10 @@ def plot_detTandExp(gene_result_pd,
     # 显示图形
     if save_path is None:
         save_path = f"{_logger.root.handlers[0].baseFilename.replace('.log', '')}{special_path_str}/"
-    save_file = f"{save_path}/{stage_str}_allGene_x{x_str.replace('_', '').capitalize()}_and_y{y_str.replace('_', '').capitalize()}_{special_filename_str}_scatter{scatter_strategy.capitalize()}.png"
-    plt.savefig(save_file, dpi=200)
+    save_file = f"{save_path}/{stage_str}_allGene_x{x_str.replace('_', '').capitalize()}_and_y{y_str.replace('_', '').capitalize()}_{special_filename_str}_scatter{scatter_strategy.capitalize()}"
+    # plt.savefig(save_file+".png", dpi=200) # before 2025-09-17 23:22:33 dpi is 200
+    plt.savefig(save_file + ".png", dpi=450)
+    plt.savefig(save_file + ".pdf", dpi=450)
     print(f"Time changes under perturb image save as {save_file}")
 
     plt.show()
@@ -1454,7 +1457,8 @@ def umap_vae_latent_space_adata_version(adata, label_str, save_path=None):
     plt.subplots_adjust(left=0.1, right=0.75)
     plt.title('UMAP: ')
     if save_path is not None:
-        plt.savefig(f"{save_path}/latentSpace_umap_{str}.png", dpi=200)
+        plt.savefig(f"{save_path}/latentSpace_umap_{str}.png", dpi=450)
+        plt.savefig(f"{save_path}/latentSpace_umap_{str}.pdf", dpi=450)
     plt.show()
     plt.close()
     return embedding
@@ -1511,7 +1515,8 @@ def plt_umap_byScanpy(adata, attr_list, save_path, mode=None, special_file_name_
         plt.tight_layout()  # 调整布局
     adata.write_h5ad(f"{save_path}/{special_file_name_str}latent_mu.h5ad")
     print(f"latent mu save as {save_path}/{special_file_name_str}latent_mu.h5ad")
-    plt.savefig(f"{save_path}/{special_file_name_str}latentSpace_umap_byScanpy.png", dpi=300, )
+    plt.savefig(f"{save_path}/{special_file_name_str}latentSpace_umap_byScanpy.png", dpi=450, )  # before 2025-09-17 22:41:41 dpi is 300
+    plt.savefig(f"{save_path}/{special_file_name_str}latentSpace_umap_byScanpy.pdf", dpi=450, )  # before 2025-09-17 22:41:41 dpi is 300
     plt.show()
     plt.close()
     print(f"figure save as {save_path}/{special_file_name_str}latentSpace_umap_byScanpy.png")
@@ -1587,7 +1592,9 @@ def plot_violin_240223(cell_info_df, save_path, x_attr="time",
     plt.xticks(size=12)
     plt.yticks(size=12)
     plt.tight_layout()
-    plt.savefig(f"{save_path}/{special_file_name + '_'}violine.png", dpi=200)
+    # plt.savefig(f"{save_path}/{special_file_name + '_'}violine.png", dpi=200)
+    plt.savefig(f"{save_path}/{special_file_name + '_'}violine.png", dpi=450)
+    plt.savefig(f"{save_path}/{special_file_name + '_'}violine.pdf", dpi=450)
 
     plt.show()
     plt.close()
@@ -1613,7 +1620,8 @@ def plot_umap_240223(mu_predict_by_pretrained_model, cell_time_stereo, color_dic
             sc.pl.umap(adata, color=attr_str, palette=color_dic, show=False, legend_fontsize=5.5, s=10, legend_loc='right margin', color_map=color_map)
         except:
             sc.pl.umap(adata, color=attr_str, show=False, legend_fontsize=5.5, s=10, legend_loc='right margin')
-    plt.savefig(f"{save_path}/latentSpace_umap_byScanpy_{attr_str}.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"{save_path}/latentSpace_umap_byScanpy_{attr_str}.png", dpi=450, bbox_inches='tight')
+    plt.savefig(f"{save_path}/latentSpace_umap_byScanpy_{attr_str}.pdf", dpi=450, bbox_inches='tight')
     plt.show()
     plt.close()
     print(f"save at {save_path}")
@@ -1706,8 +1714,9 @@ def plt_latentDim(spliced_fine_tune_result_data, unspliced_fine_tune_result_data
 
     plt.legend(markerscale=5)
     plt.tight_layout()
-    plt.savefig(f"{save_result_path}/latent_dim.png", dpi=200)
-    plt.savefig(f"{save_result_path}/latent_dim.pdf", format='pdf')
+    # plt.savefig(f"{save_result_path}/latent_dim.png", dpi=200)
+    plt.savefig(f"{save_result_path}/latent_dim.png", dpi=450)
+    plt.savefig(f"{save_result_path}/latent_dim.pdf", format='pdf', dpi=450)
     plt.show()
     plt.close()
 
@@ -1741,7 +1750,7 @@ def plot_tyser_mapping_to_datasets_attrTimeGT(adata_all, save_path, plot_attr,
                 color_dic[_t] = (0.9, 0.9, 0.9, mask_color_alpha)
 
     adata_all.obs["time"] = adata_all.obs["time"].astype("str")
-    sc.settings.set_figure_params(dpi=200, facecolor="white", figsize=(5, 5), fontsize=18)
+    sc.settings.set_figure_params(dpi=450, facecolor="white", figsize=(5, 5), fontsize=18)
 
     sc.pl.umap(adata_all, color=plot_attr, show=False,
                s=25, palette=color_dic)
@@ -1754,8 +1763,9 @@ def plot_tyser_mapping_to_datasets_attrTimeGT(adata_all, save_path, plot_attr,
     plt.legend(title=legend_title, fontsize=14, title_fontsize=14,
                loc='center left', bbox_to_anchor=(1, 0.5))
     plt.gca().set_position([0, 0, 1, 1])
-    save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{plot_attr}{special_file_str}.png"
-    plt.savefig(save_file_name, dpi=200, bbox_inches='tight')
+    save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{plot_attr}{special_file_str}"
+    plt.savefig(save_file_name + ".png", dpi=450, bbox_inches='tight')
+    plt.savefig(save_file_name + ".pdf", dpi=450, bbox_inches='tight')
     plt.show()
     plt.close()
     print(f"figure save at {save_file_name}")
@@ -1929,7 +1939,7 @@ def plot_query_mapping_to_referenceUmapSpace_attrTimeGT(adata_all, save_path, pl
     for time in unique_times:
         color_dic[str(time) + '_masked'] = masked_color
 
-    sc.settings.set_figure_params(dpi=200, facecolor="white", figsize=(5, 5), fontsize=18)
+    sc.settings.set_figure_params(dpi=450, facecolor="white", figsize=(5, 5), fontsize=18)
 
     # Plot using the new color column
     sc.pl.umap(adata_all, color='plot_color', show=False,
@@ -1964,8 +1974,9 @@ def plot_query_mapping_to_referenceUmapSpace_attrTimeGT(adata_all, save_path, pl
     plt.ylabel(plt.gca().get_ylabel(), fontsize=11)
     plt.gca().set_position([0, 0, 1, 1])
 
-    save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{plot_attr}{special_file_str}.png"
-    plt.savefig(save_file_name, dpi=200, bbox_inches='tight')
+    save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{plot_attr}{special_file_str}"
+    plt.savefig(save_file_name + ".png", dpi=450, bbox_inches='tight')
+    plt.savefig(save_file_name + ".pdf", bbox_inches='tight', dpi=450)
     plt.show()
     plt.close()
     print(f"figure save at {save_file_name}")
@@ -2048,8 +2059,9 @@ def plot_tyser_mapping_to_4dataset_predictedTime(adata_all, save_path, label_dic
     # 移除网格线
     ax = plt.gca()
     ax.grid(False)  # 禁用网格线
-    save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{plot_attr}{special_file_str}.png"
-    plt.savefig(save_file_name, dpi=200, bbox_inches='tight')
+    save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{plot_attr}{special_file_str}"
+    plt.savefig(save_file_name + ".png", dpi=450, bbox_inches='tight')
+    plt.savefig(save_file_name + ".pdf", bbox_inches='tight', dpi=450)
     # save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{attr}{special_file_str}.png"
     plt.show()
     plt.close()
@@ -2092,7 +2104,7 @@ def plot_tyser_mapping_to_datasets_attrCellType_maskTyser(adata_all, save_path, 
     _color = color_dic.pop(masked_str)
     color_dic[masked_str] = _color
 
-    sc.settings.set_figure_params(dpi=200, facecolor="white", figsize=(5, 5), fontsize=18)
+    sc.settings.set_figure_params(dpi=450, facecolor="white", figsize=(5, 5), fontsize=18)
 
     sc.pl.umap(adata_all, color=attr, show=False, s=25,
                palette=color_dic)
@@ -2116,8 +2128,9 @@ def plot_tyser_mapping_to_datasets_attrCellType_maskTyser(adata_all, save_path, 
     # plt.legend(title=legend_title, fontsize=13, title_fontsize=13,loc='center left', bbox_to_anchor=(1, 0.5))
     plt.gca().set_position([0, 0, 1, 1])
 
-    save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{attr}{special_file_str}.png"
-    plt.savefig(save_file_name, dpi=200, bbox_inches='tight')
+    save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{attr}{special_file_str}"
+    plt.savefig(save_file_name + ".png", dpi=450, bbox_inches='tight')
+    plt.savefig(save_file_name + ".pdf", dpi=450, bbox_inches='tight')
     plt.show()
     plt.close()
     print(f"figure save at {save_file_name}")
@@ -2138,7 +2151,8 @@ def plot_tyser_mapping_to_datasets_attrCellType_maskTyser(adata_all, save_path, 
 
         plt.legend(title="Cell type", fontsize=14, title_fontsize=14,
                    loc='center left', bbox_to_anchor=(1, 0.5))
-        plt.savefig(f'{save_path}/umap_cellTypeDistribution_queryOn{query_donor}.png', dpi=300, bbox_inches='tight')
+        plt.savefig(f'{save_path}/umap_cellTypeDistribution_queryOn{query_donor}.png', dpi=450, bbox_inches='tight')
+        plt.savefig(f'{save_path}/umap_cellTypeDistribution_queryOn{query_donor}.pdf', dpi=450, bbox_inches='tight')
         plt.show()
         plt.close()
     # return color_dic
@@ -2152,8 +2166,9 @@ def plot_tyser_mapping_to_datasets_attrDataset(adata_all, save_path, attr,
     import scanpy as sc
     _color = color_dic.pop(masked_str)
     color_dic[masked_str] = _color
-    sc.settings.set_figure_params(dpi=200, facecolor="white", figsize=(5, 5), fontsize=18)
-    sc.pl.umap(adata_all, color=attr, show=False, s=25, palette=color_dic)
+    sc.settings.set_figure_params(dpi=450, facecolor="white", figsize=(5, 5), fontsize=18)
+    sc.pl.umap(adata_all, color=attr, show=False,
+               s=25, palette=color_dic)
     plt.gca().set_title('')
     for spine in plt.gca().spines.values():
         spine.set_edgecolor('#808b96')  # 将边框颜色设置为红色
@@ -2162,12 +2177,20 @@ def plot_tyser_mapping_to_datasets_attrDataset(adata_all, save_path, attr,
     plt.ylabel(plt.gca().get_ylabel(), fontsize=11)
     handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color_dic[cat], markersize=8, label=cat)
                for cat in color_dic]
-    plt.legend(handles=handles, title=legend_title, fontsize=14, title_fontsize=14, loc='upper left', bbox_to_anchor=(0, 1))
-    # plt.legend(title=legend_title, fontsize=13, title_fontsize=13,loc='center left', bbox_to_anchor=(1, 0.5))
+
+    plt.legend(title=legend_title,
+               handles=handles,
+               fontsize=13,
+               title_fontsize=14,
+               loc='center left',
+               bbox_to_anchor=(1, 0.5))
+    # plt.legend(handles=handles, title=legend_title, fontsize=14, title_fontsize=14, loc='upper left', bbox_to_anchor=(0, 1))
+
     plt.gca().set_position([0, 0, 1, 1])
 
-    save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{attr}{special_file_str}.png"
-    plt.savefig(save_file_name, dpi=200, bbox_inches='tight')
+    save_file_name = f"{save_path}/tyser_mapping_to_{reference_dataset_str}_{attr}{special_file_str}"
+    plt.savefig(save_file_name + ".png", dpi=450, bbox_inches='tight')
+    plt.savefig(save_file_name + ".pdf", dpi=450, bbox_inches='tight')
     plt.show()
     plt.close()
     print(f"figure save at {save_file_name}")
@@ -2193,8 +2216,19 @@ def plt_enrichmentResult(species, gene_set, env_gene_list, stage, save_path, top
                         show_ring=True,  # set to False to revmove outer ring
                         marker='o',
                         ofname=f"{save_path}/{stage}_enrichment_{env_gene_num}Genes_{species}_Top{env_gene_num}Genes.png")
+    ax = gseapy.dotplot(enr.results,
+                        column="Adjusted P-value",
+                        x='Gene_set',  # set group, so you could do a multi-sample/library comparsion
+                        size=10,
+                        top_term=top_term,
+                        figsize=(3, 5),
+                        title=f"{stage.capitalize()} time cluster.",
+                        xticklabels_rot=45,  # rotate xtick labels
+                        show_ring=True,  # set to False to revmove outer ring
+                        marker='o',
+                        ofname=f"{save_path}/{stage}_enrichment_{env_gene_num}Genes_{species}_Top{env_gene_num}Genes.pdf")
     # ofname=f"{file_path}/{_s}_enrichment_{env_gene_num}Genes_{species}.png")
-    # plt.savefig(f"{save_path}/{stage}_enrichment_{env_gene_num}Genes_{species}.png", bbox_inches="tight", dpi=300)
+    # plt.savefig(f"{save_path}/{stage}_enrichment_{env_gene_num}Genes_{species}.png", bbox_inches="tight", dpi=450)
     # plt.gcf().subplots_adjust(left=0.05,top=0.91,bottom=0.09)
     # plt.show()
     plt.close()
@@ -2241,8 +2275,9 @@ def plt_violinAndDot_topGene_inWhole_stage(top_gene_dic, perturb_data_denor,
         # ax.legend(loc='upper right', fontsize=16)
     sns.despine()
     plt.tight_layout()
-    save_file_name = f"{save_path}/{species}_wholeStage_perturb_top{perturb_show_gene_num}Gene_xTime_yDetT.png"
-    plt.savefig(save_file_name, dpi=200)
+    save_file_name = f"{save_path}/{species}_wholeStage_perturb_top{perturb_show_gene_num}Gene_xTime_yDetT"
+    plt.savefig(save_file_name + ".png", dpi=450)
+    plt.savefig(save_file_name + ".pdf", dpi=450)
     print(f"figure save as {save_file_name}")
     plt.show()
     plt.close()
@@ -2325,8 +2360,10 @@ def plt_lineChart_stageGeneDic_inStages(top_gene_dic, perturb_data_denor,
                 ax.set_xticklabels(time_point_list, rotation=45, fontsize=16)  # 确保使用正确的刻度和格式
     # sns.despine()
     plt.tight_layout()
-    save_file_name = f"{save_path}/{special_filename_head_str}{plt_stage}Stage_perturb_top{perturb_show_gene_num}Gene_xTime_y{cal_detT_str.capitalize()}DetT_line_{species}{special_filename_tail_str}.png"
-    plt.savefig(save_file_name, dpi=200)
+    save_file_name = f"{save_path}/{special_filename_head_str}{plt_stage}Stage_perturb_top{perturb_show_gene_num}Gene_xTime_y{cal_detT_str.capitalize()}DetT_line_{species}{special_filename_tail_str}"
+    # plt.savefig(save_file_name+".png", dpi=200)
+    plt.savefig(save_file_name + ".png", dpi=450)
+    plt.savefig(save_file_name + ".pdf", dpi=450)
     print(f"figure save as {save_file_name}")
     plt.show()
     plt.close()
@@ -2362,8 +2399,10 @@ def plt_venn_fromDict(enr_top_gene_dic2, save_path, perturb_show_gene_num, speci
     # 显示图表
     plt.title("Venn Diagram of cell time clusters.", fontsize=16)
     plt.tight_layout()
-    save_file_name = f"{save_path}/3Stage_perturb_top{perturb_show_gene_num}Gene_{species}_venn.png"
-    plt.savefig(save_file_name, dpi=200)
+    save_file_name = f"{save_path}/3Stage_perturb_top{perturb_show_gene_num}Gene_{species}_venn"
+    # plt.savefig(save_file_name+".png", dpi=200)
+    plt.savefig(save_file_name + ".png", dpi=450)
+    plt.savefig(save_file_name + ".pdf", dpi=450)
     print(f"figure save as {save_file_name}")
     plt.show()
     plt.close()
@@ -2394,8 +2433,9 @@ def plt_perturb_xTime_yDetT(plot_pd, gene_list, save_path, stage):
     # handles, labels = plt.gca().get_legend_handles_labels()
     # plt.legend(handles, labels, title='Gene')
     plt.tight_layout()
-    save_file_name = f"{save_path}/{stage}_perturb_top{len(gene_list)}Gene_xTime_yDetT.png"
-    plt.savefig(save_file_name, dpi=200)
+    save_file_name = f"{save_path}/{stage}_perturb_top{len(gene_list)}Gene_xTime_yDetT"
+    plt.savefig(save_file_name + ".png", dpi=450)
+    plt.savefig(save_file_name + ".pdf", dpi=450)
     print(f"Time changes under perturb image save as {save_file_name}")
     plt.show()
     plt.close()
@@ -2487,8 +2527,10 @@ def plt_muiltViolin_forGenes_xRawCount(adata_df, intersection, cell_info,
             axes[i].set_xlabel('Biogical time', fontsize=22)
             axes[i].set_xticklabels(vplot.get_xticklabels(), rotation=45, fontsize=20)
     plt.tight_layout()
-    save_file_name = f"{save_path}/geneExpression_top{perturb_show_gene_num}Gene_{species}_violin{special_filename_str}.png"
-    plt.savefig(save_file_name, dpi=200)
+    save_file_name = f"{save_path}/geneExpression_top{perturb_show_gene_num}Gene_{species}_violin{special_filename_str}"
+    # plt.savefig(save_file_name+".png", dpi=200)
+    plt.savefig(save_file_name + ".png", dpi=450)
+    plt.savefig(save_file_name + ".pdf", dpi=450)
     print(f"figure save as {save_file_name}")
     plt.show()
     plt.close()

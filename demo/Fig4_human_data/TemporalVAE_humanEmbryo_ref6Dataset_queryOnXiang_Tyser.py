@@ -32,12 +32,12 @@ import argparse
 import anndata as ad
 import numpy as np
 import pandas as pd
-
+import umap
 
 def main():
     parser = argparse.ArgumentParser(description="TemporalVAE")
     parser.add_argument('--result_save_path', type=str,  # 2023-07-13 17:40:22
-                        default="/test/Fig4_TemporalVAE_human_ref6dataset_queryOnTyserAndXiang/",
+                        default="/test/Fig4_TemporalVAE_human_ref6dataset_queryOnTyserAndXiang_0921_TVAEv1/",
                         help="results all save here")
     parser.add_argument('--file_path', type=str,
                         default="/human_embryo_preimplantation/integration_8dataset/",
@@ -170,7 +170,7 @@ def main():
     #                                                  runner, experiment, adata_subset.copy(), _logger, save_path,
     #                                                  special_file_name=f"_subRefTime{random_select_n_timePoint}",umap_n_neighbors=100,
     #                                                  )
-    import umap
+
     # less cell to train umap reducer.
     umap_n_neighbors = 20
     random_select_n_timePoint = 200
@@ -180,6 +180,13 @@ def main():
     umap_reducer = umap.UMAP(n_neighbors=umap_n_neighbors, min_dist=0.75, n_components=2, random_state=0)
     adata_subset.obsm['X_umap'] = umap_reducer.fit_transform(adata_subset.X)
     adata_mu_reference.obsm['X_umap'] = umap_reducer.transform(adata_mu_reference.X)
+    adata_mu_query_Xiang = queryOneDataset_referenceOn6Datasets_humanEmbryo("Xiang",
+                                                                            cell_time, sc_expression_df,
+                                                                            time_standard_type, label_dic, batch_dic,
+                                                                            runner, experiment, adata_mu_reference.copy(), _logger, save_path,
+                                                                            umap_reducer,
+                                                                            special_file_name=f"_subCell{random_select_n_timePoint}_umapNei{umap_n_neighbors}"
+                                                                            )
     adata_mu_query_T=queryOneDataset_referenceOn6Datasets_humanEmbryo("T",
                                                      cell_time, sc_expression_df,
                                                      time_standard_type, label_dic, batch_dic,
@@ -187,13 +194,7 @@ def main():
                                                      umap_reducer,
                                                      special_file_name=f"_subCell{random_select_n_timePoint}_umapNei{umap_n_neighbors}"
                                                      )
-    adata_mu_query_Xiang=queryOneDataset_referenceOn6Datasets_humanEmbryo("Xiang",
-                                                     cell_time, sc_expression_df,
-                                                     time_standard_type, label_dic, batch_dic,
-                                                     runner, experiment, adata_mu_reference.copy(), _logger, save_path,
-                                                     umap_reducer,
-                                                     special_file_name=f"_subCell{random_select_n_timePoint}_umapNei{umap_n_neighbors}"
-                                                     )
+
     # ----
     _adata_temp = anndata.concat([adata_mu_reference.copy(), adata_mu_query_T.copy(),adata_mu_query_Xiang], axis=0)
     adata_filtered.obsm["X_umap"] = _adata_temp[adata_filtered.obs.index].obsm["X_umap"]

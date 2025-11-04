@@ -1,7 +1,7 @@
 # -*-coding:utf-8 -*-
 """
 @Project ：TemporalVAE
-@File    ：a-undetermined-TemporalVAE_science2022_LR_PCA_RF_referenceAtlas_queryStereo.py
+@File    ：TemporalVAE_referenceAtlas_queryStereo.py
 @IDE     ：PyCharm
 @Author  ：awa121
 @Date    ：2024/9/8 22:34
@@ -95,7 +95,7 @@ def directly_predict_on_vae(query_adata, save_path, checkpoint_file, config):
     torch.set_float32_matmul_precision('high')
 
     # 2024-02-23 14:26:17 add only predict on stereo data
-    checkpoint = torch.load(checkpoint_file, map_location='cpu')
+    checkpoint = torch.load(f"{os.getcwd()}/{checkpoint_file}", map_location='cpu')
     # 去掉每层名字前面的 "model."
     state_dict = checkpoint['state_dict']
     new_state_dict = {}

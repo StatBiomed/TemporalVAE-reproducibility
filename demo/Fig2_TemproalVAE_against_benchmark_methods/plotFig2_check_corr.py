@@ -219,6 +219,10 @@ def plot_boxAndDot_on_allData(pca_df, randomForest_df, lr_df, psupertime_df, tem
     label_num = len(np.unique(pca_df["time"]))
     # 设置Seaborn的样式
 
+    from matplotlib import rcParams
+    rcParams["font.family"] = ["DejaVu Sans", "Helvetica", "sans-serif"]  # 优先使用DejaVu Sans，无则 fallback到其他无衬线字体
+    rcParams["font.sans-serif"] = ["DejaVu Sans"]  # 确保sans-serif字体族优先选择DejaVu Sans
+
     sns.set(style="whitegrid")
 
     # 使用Seaborn的FacetGrid创建子图
@@ -287,8 +291,14 @@ def plot_kFold_corr(pca_df, randomForest_df, lr_df, psupertime_df, vae_df,
     # 设置柱状图宽度
     width = 0.15
 
+    from matplotlib import rcParams
+    rcParams["font.family"] = ["DejaVu Sans", "Helvetica", "sans-serif"]  # 优先使用DejaVu Sans，无则 fallback到其他无衬线字体
+    rcParams["font.sans-serif"] = ["DejaVu Sans"]  # 确保sans-serif字体族优先选择DejaVu Sans
+
+
     # 创建两个子图，一个显示Spearman相关性，另一个显示Kendall Tau相关性
     fig, ax1 = plt.subplots(1, 1, figsize=(len(all_labels) * 1.2, 5), sharex=False)
+
     # fig, ax1 = plt.subplot(figsize=(len(all_labels), 4), sharex=False)
     # fig, (ax1, ax2) = plt.subplots(1, 1, figsize=(10, 8), sharex=True)
 

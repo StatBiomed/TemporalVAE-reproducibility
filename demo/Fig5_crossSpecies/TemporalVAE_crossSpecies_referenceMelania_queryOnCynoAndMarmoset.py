@@ -36,7 +36,7 @@ import numpy as np
 def main():
     parser = argparse.ArgumentParser(description="TemporalVAE")
     parser.add_argument('--result_save_path', type=str,  # 2023-07-13 17:40:22
-                        default="/Fig6_referenceHumanMelania_queryOnCyno&Marmoset_240903/",
+                        default="/test/Fig6_referenceHumanMelania_queryOnCyno&Marmoset_250918_base/",
                         help="results all save here")
     parser.add_argument('--file_path', type=str,
                         default="/human_embryo_preimplantation/Melania_5datasets/",

@@ -38,7 +38,7 @@ import yaml
 import argparse
 from TemporalVAE.utils import Embryodonor_resort_key
 import numpy as np
-
+import gc
 
 def main():
     parser = argparse.ArgumentParser(description="CNN model for prediction of gene paris' regulatory relationship")

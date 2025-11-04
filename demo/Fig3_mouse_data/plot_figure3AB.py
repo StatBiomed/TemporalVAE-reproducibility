@@ -9,10 +9,10 @@
 # -*-coding:utf-8 -*-
 import os
 import sys
-
-if os.getcwd().split("/")[-1] != "TemporalVAE":
-    os.chdir("../..")
-sys.path.append(os.getcwd())
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(f"project_root: {project_root}")
+sys.path.append(project_root)
+os.chdir(project_root)
 
 from TemporalVAE.utils import calculate_real_predict_corrlation_score
 import pandas as pd
@@ -92,7 +92,8 @@ def plot_kfold_mouseAtlas_fromCSV(boxPlot_df, x_axis_attr="time", y_axis_attr="p
     plt.yticks(size=16)
     plt.tight_layout()
     try:
-        plt.savefig(f"{save_as}", dpi=350)
+        plt.savefig(f"{save_as}", dpi=450)
+        plt.savefig(f"{save_as.replace('.png','.pdf')}", dpi=450)
         print(f"Finish save images as: {save_as}")
     except:
         pass
