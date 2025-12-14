@@ -2005,7 +2005,10 @@ def plot_tyser_mapping_to_4dataset_predictedTime(adata_all, save_path, label_dic
     color_dic = dict(zip(adata_all.obs[plot_attr], colors))
     for _k, _v in color_dic.items():
         color_dic[_k] = tuple(_v)
-    mask = adata_all.obs[mask_str] == mask_dataset_label
+    # mask = adata_all.obs[mask_str] == mask_dataset_label
+    mask = adata_all.obs[mask_str].isin(mask_dataset_label) \
+        if isinstance(mask_dataset_label, list) \
+        else (adata_all.obs[mask_str] == mask_dataset_label)
     colors[mask] = (0.9, 0.9, 0.9, mask_color_alpha)
 
     _mask = (colors[:, -1] != mask_color_alpha)
@@ -2164,8 +2167,8 @@ def plot_tyser_mapping_to_datasets_attrDataset(adata_all, save_path, attr,
                                                reference_dataset_str="",
                                                special_file_str=""):
     import scanpy as sc
-    _color = color_dic.pop(masked_str)
-    color_dic[masked_str] = _color
+    # _color = color_dic.pop(masked_str)
+    # color_dic[masked_str] = _color
     sc.settings.set_figure_params(dpi=450, facecolor="white", figsize=(5, 5), fontsize=18)
     sc.pl.umap(adata_all, color=attr, show=False,
                s=25, palette=color_dic)

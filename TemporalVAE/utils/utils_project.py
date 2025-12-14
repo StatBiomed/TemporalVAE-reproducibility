@@ -1121,12 +1121,10 @@ def trans_time(capture_time, time_standard_type, capture_time_other=None, label_
             max_val = np.max(unique_time)
         # full_range = np.arange(min_val, max_val + 50, 50)
 
-
         # unique_time = sorted(list(set(unique_time.tolist() + full_range.tolist())))
         # 最小-最大归一化
         normalized_data = (unique_time - min_val) * (new_max - new_min) / (max_val - min_val) + new_min
         # normalized_data = (unique_time - min_val) / (max_val - min_val) * 2 - 1
-
 
         label_dic = {int(key): round(value, 3) for key, value in zip(unique_time, normalized_data)}
     elif time_standard_type == "organdic":  # 2023-11-02 10:50:09 add for Joy organ project
@@ -3536,6 +3534,8 @@ def voteScore_genePerturbation(cell_df, perturb_df, top_gene_num, predictedTime_
     all_top_columns = [col for sublist in top_columns_per_row for col in sublist]
     column_counts = pd.Series(all_top_columns).value_counts()
     return column_counts
+
+
 def from_adata_randomSelect_cells_equityTimePoint(adata_mu_reference, random_select_n_timePoint=200, random_seed=0):
     from collections import Counter
     # Randomly select 200 variables (genes) from adata
@@ -3574,6 +3574,8 @@ def from_adata_randomSelect_cells_equityTimePoint(adata_mu_reference, random_sel
           f"{Counter(adata_subset.obs['time'])}\n\t"
           f"{Counter(adata_subset.obs['cell_type'])}")
     return adata_subset
+
+
 def queryOneDataset_referenceOn6Datasets_humanEmbryo(test_donor,
                                                      cell_time, sc_expression_df,
                                                      time_standard_type, label_dic, batch_dic,
@@ -3594,7 +3596,15 @@ def queryOneDataset_referenceOn6Datasets_humanEmbryo(test_donor,
     try:
         y_time_nor_test, label_dic = trans_time(y_time_test, time_standard_type, label_dic_train=label_dic)
     except:
-        print("error")
+        print("Test donor time label is out of the range of referenc.")
+        print("add test donor time to label dic")
+        print(f"old label dic:{label_dic}")
+        label_dic = add_new_keys_to_dict(label_dic.copy(), y_time_test)
+        print(f"new label dic:{label_dic}")
+        try:
+            y_time_nor_test, label_dic = trans_time(y_time_test, time_standard_type, label_dic_train=label_dic)
+        except:
+            print("still error?")
     x_sc_test = torch.tensor(sc_expression_test.values, dtype=torch.get_default_dtype()).t()
     donor_index_test = x_sc_test.new_tensor(
         [int(batch_dic[cell_time.loc[_cell_name]['dataset_label']]) for _cell_name in sc_expression_test.index.values])
@@ -3667,32 +3677,53 @@ def queryOneDataset_referenceOn6Datasets_humanEmbryo(test_donor,
     # save reference and query low-dim .h5ad, includes .obsm["X_umap"]
     adata_combined.write_h5ad(f"{save_path}/{reference_dataset_str}_mu{special_file_name}.h5ad")
     print(f"Final plot dataset information: {Counter(adata_combined.obs['dataset_label'])}")
+    print(f"adata_combined saved at {save_path}/{reference_dataset_str}_mu{special_file_name}.h5ad")
 
-
-    adata_combined=anndata.read_h5ad(f"results/Fig4_TemporalVAE_human_ref6dataset_queryOnTyserAndXiang/human_embryo_preimplantation/integration_8dataset/supervise_vae_regressionclfdecoder_mouse_stereo_dim50_timeembryoneg1to1_epoch50_batchSize100000_minGeneNum50/{reference_dataset_str}_mu{special_file_name}.h5ad")
+    # adata_combined=anndata.read_h5ad(f"results/Fig4_TemporalVAE_human_ref6dataset_queryOnTyserAndXiang/human_embryo_preimplantation/integration_8dataset/supervise_vae_regressionclfdecoder_mouse_stereo_dim50_timeembryoneg1to1_epoch50_batchSize100000_minGeneNum50/{reference_dataset_str}_mu{special_file_name}.h5ad")
 
     # --- plot on dataset
+    print("plot on dataset.")
+    if test_donor in ["Xiang", "T"]:
+        print(f"reference is L,M,P,Z,Xiao,C, for print figures in the paper.")
+        color_dic = {'L': '#E06377',
+                     'M': '#7ED957',
+                     'P': '#FFC947',
+                     'Z': '#00CED1',
+                     'Xiao': "#B292CA",
+                     'C': '#c76f00',
+                     # 'Lv': '#8f5239',
+                     test_donor: (0.9, 0.9, 0.9, 0.7)}
+
+    else:
+        print(f"reference is 'C', 'Xiao', 'T', 'L', 'Z', 'M', 'P', 'Xiang'")
+        color_dic = {'L': '#E06377',
+                     'M': '#7ED957',
+                     'P': '#FFC947',
+                     'Z': '#00CED1',
+                     'Xiao': "#B292CA",
+                     'C': '#c76f00',
+                     'T': '#8f5239',
+                     "Xiang": '#00bcd4',
+                     test_donor: (0.9, 0.9, 0.9, 0.7)}
+
     plot_tyser_mapping_to_datasets_attrDataset(adata_combined.copy(), save_path,
                                                attr="dataset_label", masked_str=test_donor,
-                                               color_dic={'L': '#E06377',
-                                                          'M': '#7ED957',
-                                                          'P': '#FFC947',
-                                                          'Z': '#00CED1',
-                                                          'Xiao': "#B292CA",
-                                                          'C': '#c76f00',
-                                                          # 'Lv': '#8f5239',
-                                                          test_donor: (0.9, 0.9, 0.9, 0.7)},
+                                               color_dic=color_dic,
                                                legend_title="Dataset",
                                                reference_dataset_str=reference_dataset_str,
                                                special_file_str=f"_mask{test_donor}_query{test_donor}{special_file_name}")
+
+    color_dic = {t: "#E06D83" if t == test_donor else (0.9, 0.9, 0.9, 0.7)
+                 for t in adata_combined.obs["data_type"].unique()}
     plot_tyser_mapping_to_datasets_attrDataset(adata_combined.copy(), save_path,
                                                attr="data_type", masked_str='L & M & P & Z & Xiao & C',
-                                               color_dic={'L & M & P & Z & Xiao & C': (0.9, 0.9, 0.9, 0.7),
-                                                          test_donor: "#E06D83"},
+                                               # color_dic={'L & M & P & Z & Xiao & C': (0.9, 0.9, 0.9, 0.7),test_donor: "#E06D83"},
+                                               color_dic=color_dic,
                                                reference_dataset_str=reference_dataset_str,
                                                legend_title="Dataset", special_file_str=f"_maskL&M&P&Z&Xiao&C_query{test_donor}{special_file_name}")
 
     # --- plot on cell type
+    print("plot on cell type.")
     plot_tyser_mapping_to_datasets_attrCellType_maskTyser(adata_combined.copy(), save_path, attr="cell_typeMaskTyser",
                                                           masked_str=test_donor, color_palette="hsv",
                                                           legend_title="Cell type",
@@ -3706,14 +3737,24 @@ def queryOneDataset_referenceOn6Datasets_humanEmbryo(test_donor,
                                                           special_file_str=f'_maskL&M&P&Z&Xiao&C_query{test_donor}{special_file_name}',
                                                           query_donor=test_donor, top_vis_cellType_num=15)
     # --- plot on dataset observed cell stage
+    print("plot on dataset observed cell stage.")
     plot_query_mapping_to_referenceUmapSpace_attrTimeGT(adata_combined.copy(), save_path, plot_attr='time',
                                                         legend_title=f"Cell stage\nof Ref.",
                                                         mask_dataset_label=test_donor,
                                                         reference_dataset_str=reference_dataset_str,
                                                         special_file_str=f'_cellStageOnDataset_mask{test_donor}_query{test_donor}{special_file_name}')
+
+    if test_donor in ["Xiang", "T"]:
+        print(f"reference is L,M,P,Z,Xiao,C, for print figures in the paper.")
+        mask_dataset_label=['L', 'M', 'P', 'Z', 'Xiao', 'C']
+
+    else:
+        print(f"reference is 'C', 'Xiao', 'T', 'L', 'Z', 'M', 'P', 'Xiang'")
+        mask_dataset_label = ['L', 'M', 'P', 'Z', 'Xiao', 'C',"T","Xiang"]
+
     plot_query_mapping_to_referenceUmapSpace_attrTimeGT(adata_combined.copy(), save_path, plot_attr='time',
                                                         legend_title=f"Cell stage\nof {test_donor}",
-                                                        mask_dataset_label=['L', 'M', 'P', 'Z', 'Xiao', 'C'],
+                                                        mask_dataset_label=mask_dataset_label,
                                                         reference_dataset_str=reference_dataset_str,
                                                         special_file_str=f'_cellStageOnDataset_maskL&M&P&Z&Xiao&C_query{test_donor}{special_file_name}')
 
@@ -3734,15 +3775,20 @@ def queryOneDataset_referenceOn6Datasets_humanEmbryo(test_donor,
     plot_tyser_mapping_to_4dataset_predictedTime(adata_combined.copy(), save_path, label_dic,
                                                  mask_dataset_label=test_donor, plot_attr='predicted_time',
                                                  reference_dataset_str=reference_dataset_str,
+                                                 mask_str="data_type",
                                                  special_file_str=f"_mask{test_donor}_query{test_donor}{special_file_name}"
                                                  )
+    if test_donor in ["Xiang", "T"]:
+        print(f"reference is L,M,P,Z,Xiao,C, for print figures in the paper.")
+        mask_dataset_label='L & M & P & Z & Xiao & C'
+    else:
+        mask_dataset_label = [t for t in adata_combined.obs["data_type"].unique() if t != test_donor]
     plot_tyser_mapping_to_4dataset_predictedTime(adata_combined.copy(), save_path, label_dic,
-                                                 mask_dataset_label='L & M & P & Z & Xiao & C',
+                                                 mask_dataset_label=mask_dataset_label,
                                                  plot_attr='predicted_time',
                                                  reference_dataset_str=reference_dataset_str,
+                                                 mask_str="data_type",
                                                  special_file_str=f"_maskL&M&P&Z&Xiao&C_query{test_donor}{special_file_name}")
-
-
 
     # if umap_space_withSubsetRef:
     #     adata_subset=from_adata_randomSelect_cells_equityTimePoint(adata_mu_reference, random_select_n_timePoint=random_select_n_timePoint, random_seed=0)
@@ -3765,3 +3811,60 @@ def queryOneDataset_referenceOn6Datasets_humanEmbryo(test_donor,
     import gc
     gc.collect()
     return adata_mu_query
+
+
+def add_new_keys_to_dict(dic, y_time_test):
+    # 1.
+    if isinstance(y_time_test, torch.Tensor):
+        unique_values = y_time_test.unique().tolist()
+    else:
+        unique_values = list(set(y_time_test))
+    # 2.
+    new_keys = [x for x in unique_values if x not in dic]
+    if not new_keys:
+        print("all time point in dic label, no need to add new key")
+        return dic
+
+    print(f"Found {len(new_keys)} new key need to add: {sorted(new_keys)}")
+
+    # 3. calculate new value
+    sorted_items = sorted(dic.items())
+    keys = [k for k, _ in sorted_items]
+    values = [v for _, v in sorted_items]
+
+    new_items = {}
+    for x in new_keys:
+        # Determine the position of x
+        if x < keys[0]:
+            # left out
+            x1, x2 = keys[0], keys[1]
+            y1, y2 = values[0], values[1]
+            slope = (y2 - y1) / (x2 - x1)
+            y = y1 + slope * (x - x1)
+        elif x > keys[-1]:
+            # right out
+            x1, x2 = keys[-2], keys[-1]
+            y1, y2 = values[-2], values[-1]
+            slope = (y2 - y1) / (x2 - x1)
+            y = y2 + slope * (x - x2)
+        else:
+            # insert
+            for i in range(len(keys) - 1):
+                if keys[i] < x < keys[i + 1]:
+                    x1, x2 = keys[i], keys[i + 1]
+                    y1, y2 = values[i], values[i + 1]
+                    t = (x - x1) / (x2 - x1)
+                    y = y1 + t * (y2 - y1)
+                    break
+
+        new_items[x] = y
+
+    # 4.
+    dic.update(new_items)
+
+    print("\nnew labe dic:")
+    for k, v in sorted(new_items.items()):
+        print(f" {k}: {v:.3f}")
+
+    print(f"\n label dict from {len(keys)} to {len(dic)}")
+    return dic
